@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Genre Wizard 🎵</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #8a2be2;
+            --secondary: #c71585;
+            --accent: #ff1493;
+            --light: #f8f9fa;
+            --dark: #252a41;
+            --success: #00c9a7;
+            --info: #4cc9f0;
+            --warning: #ffd166;
+            --danger: #ff6b6b;
+            --gradient-1: linear-gradient(135deg, #8a2be2, #c71585);
+            --gradient-2: linear-gradient(135deg, #ff1493, #ff8c00);
+            --gradient-3: linear-gradient(135deg, #00c9a7, #4cc9f0);
+        }
+
+        body {
+            background: #0f0c29;
+            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            color: var(--light);
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Animated background elements */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -5s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: var(--accent);
+            top: 50%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+            50% {
+                transform: translate(0, 100px) scale(0.9);
+            }
+            75% {
+                transform: translate(-50px, 50px) scale(1.05);
+            }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: skewX(-15deg);
+            transition: 0.5s;
+            filter: blur(5px);
+        }
+
+        .glass-card:hover::before {
+            left: 150%;
+            transition: 0.5s ease-in-out;
+        }
+
+        .app-header {
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .app-title {
+            font-weight: 800;
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #ff8c00, #ff1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .app-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            font-size: 1.1rem;
+        }
+
+        .app-body {
+            padding: 2rem;
+        }
+
+        .upload-box {
+            border: 3px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .upload-content {
+            padding: 3rem 1.5rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .upload-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .upload-icon i {
+            background: linear-gradient(to right, #ff8c00, #ff1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: pulse 2s infinite;
+        }
+
+        .upload-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(255, 20, 147, 0.3) 0%, rgba(255, 20, 147, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: ripple 2s infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .upload-text {
+            font-weight: 600;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .upload-subtext {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        .file-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            margin: 0 0.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-badge:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .equalizer {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            height: 80px;
+            margin: 1.5rem 0;
+        }
+
+        .equalizer-bar {
+            width: 8px;
+            background: linear-gradient(to top, var(--primary), var(--accent));
+            border-radius: 4px;
+            animation: equalize 1.2s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+        }
+
+        @keyframes equalize {
+            0%, 100% {
+                transform: scaleY(0.3);
+            }
+            50% {
+                transform: scaleY(1);
+            }
+        }
+
+        .result-card {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-card.show-result {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .genre-icon-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+        }
+
+        .genre-icon {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
+            position: relative;
+            z-index: 2;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .genre-icon-container::before,
+        .genre-icon-container::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            opacity: 0.4;
+            z-index: 1;
+        }
+
+        .genre-icon-container::before {
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        .genre-icon-container::after {
+            animation: pulse-ring 2s 0.5s ease-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.4;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .result-label {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .genre-result {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #ff8c00, #ff1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .audio-player-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .audio-player-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            opacity: 0.7;
+        }
+
+        .audio-player {
+            width: 100%;
+            height: 50px;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+        }
+
+        #errorMessage {
+            display: none;
+            padding: 1rem;
+            background-color: rgba(255, 107, 107, 0.2);
+            border-left: 4px solid var(--danger);
+            margin-bottom: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            color: white;
+        }
+
+        /* History button and panel */
+        .history-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.5);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+
+        .history-btn:hover {
+            transform: translateY(-5px) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
+        }
+
+        .history-btn.active {
+            transform: rotate(45deg);
+            background: linear-gradient(135deg, var(--danger), var(--warning));
+        }
+
+        .history-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: rgba(37, 42, 65, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 999;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-panel.show {
+            right: 0;
+        }
+
+        .history-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .history-panel-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ff8c00, #ff1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0;
+        }
+
+        .history-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .history-close:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .history-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1);
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .history-item:hover::before {
+            opacity: 1;
+        }
+
+        .history-filename {
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .history-genre {
+            font-weight: 700;
+            background: linear-gradient(to right, #ff8c00, #ff1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.3rem;
+            display: inline-block;
+        }
+
+        .history-time {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .history-empty i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Custom audio player styling */
+        audio::-webkit-media-controls-panel {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        audio::-webkit-media-controls-play-button {
+            background-color: var(--primary);
+            border-radius: 50%;
+        }
+
+        /* Music notes animation */
+        .music-notes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .music-note {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.2);
+            animation: float-note 10s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float-note {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .history-panel {
+                width: 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1rem;
+            }
+            
+            .app-title {
+                font-size: 2.2rem;
+            }
+            
+            .genre-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
+            
+            .genre-result {
+                font-size: 2.8rem;
+            }
+
+            .history-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .history-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Animated wave effect */
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%238a2be2" fill-opacity="0.2" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: 1440px 100px;
+            animation: wave 10s linear infinite;
+            opacity: 0.5;
+        }
+
+        .wave:nth-child(2) {
+            bottom: 10px;
+            opacity: 0.3;
+            animation: wave 8s linear infinite reverse;
+        }
+
+        @keyframes wave {
+            0% {
+                background-position-x: 0;
+            }
+            100% {
+                background-position-x: 1440px;
+            }
+        }
+
+        /* Neon glow effect for result */
+        .neon-glow {
+            box-shadow: 0 0 10px rgba(255, 20, 147, 0.5),
+                        0 0 20px rgba(255, 20, 147, 0.3),
+                        0 0 30px rgba(255, 20, 147, 0.1);
+        }
+
+        /* Confetti animation for successful prediction */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1001;
+            display: none;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+
+        /* Delete history button */
+        .delete-history-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .delete-history-btn:hover {
+            background: rgba(255, 107, 107, 0.5);
+            transform: scale(1.1);
+        }
+
+        /* Favorite button */
+        .favorite-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            margin-right: 8px;
+        }
+
+        .favorite-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            color: #ffd166;
+        }
+
+        /* Favorites filter */
+        .history-filters {
+            display: flex;
+            padding: 0 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        /* Search box */
+        .search-container {
+            position: relative;
+            margin: 0 1.5rem 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px 8px 36px;
+            border-radius: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        canvas.visualizer {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Light theme styles */
+        body.light-theme {
+            background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+            color: var(--dark);
+        }
+
+        body.light-theme .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        body.light-theme .app-subtitle,
+        body.light-theme .upload-subtext,
+        body.light-theme .upload-text,
+        body.light-theme .loading-text,
+        body.light-theme .result-label {
+            color: rgba(0, 0, 0, 0.7);
+        }
+        body.light-theme .upload-text{
+             color: var(--dark);
+        }
+
+
+        body.light-theme .history-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .history-item {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--dark);
+        }
+
+        body.light-theme .history-filename {
+            color: var(--dark);
+        }
+
+        body.light-theme .history-time {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Share button */
+        .share-btn {
+            background: linear-gradient(135deg, #4cc9f0, #00c9a7);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 201, 167, 0.3);
+        }
+
+        /* Stats panel */
+        .stats-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.light-theme .stats-container {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0,0,0,0.1);
+        }
+
+
+        .stats-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        body.light-theme .stats-title {
+            color: var(--dark);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem;
+            text-align: center;
+        }
+        body.light-theme .stat-item {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ff8c00, #ff1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.3rem;
+        }
+        body.light-theme .stat-label {
+            color: rgba(0,0,0,0.6);
+        }
+
+        /* Toast notification */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+        }
+
+        .toast {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-info {
+            border-left: 4px solid var(--info);
+        }
+        /* Clear all history button */
+        .clear-history-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .clear-history-btn:hover {
+            background: rgba(255, 107, 107, 0.5);
+        }
+        body.light-theme .clear-history-btn {
+            background: rgba(255, 107, 107, 0.3);
+            color: var(--dark);
+        }
+        body.light-theme .clear-history-btn:hover {
+            background: rgba(255, 107, 107, 0.6);
+        }
+
+
+        /* Recommendations Section */
+        .recommendations-title {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(to right, var(--info), var(--success));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 3px 10px rgba(76, 201, 240, 0.2);
+        }
+
+        #recommendationsList {
+            max-height: 320px; /* Adjust as needed */
+            overflow-y: auto;
+            padding-right: 10px; 
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1);
+        }
+
+        #recommendationsList::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #recommendationsList::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        #recommendationsList::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        #recommendationsList::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+
+        .song-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .song-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%; 
+        }
+
+        .song-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .song-image { /* This is the wrapper div */
+            width: 60px;
+            height: 60px;
+            min-width: 60px; /* ensure it doesn't shrink */
+            border-radius: 8px;
+            background-color: rgba(255,255,255,0.1); /* Placeholder bg */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* To clip image if it's larger */
+        }
+        .song-image img { /* Style for the actual image inside the wrapper */
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .song-image-placeholder { /* Class for the <i> icon */
+            font-size: 2rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+
+        .song-details {
+            flex-grow: 1;
+            overflow: hidden; 
+        }
+
+        .song-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-artist {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Light theme adjustments for recommendations */
+        body.light-theme .recommendations-title {
+            background: linear-gradient(to right, var(--primary), var(--secondary)); 
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: none;
+        }
+
+        body.light-theme #recommendationsList::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        body.light-theme #recommendationsList::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-theme .song-card {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        body.light-theme .song-card:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+        body.light-theme .song-title {
+            color: var(--dark);
+        }
+        body.light-theme .song-artist {
+            color: rgba(0, 0, 0, 0.6);
+        }
+        body.light-theme .song-image {
+             background-color: rgba(0,0,0,0.05);
+        }
+        body.light-theme .song-image-placeholder {
+            color: rgba(0,0,0,0.4);
+        }
+        body.light-theme #recommendationsError {
+            background-color: rgba(255, 200, 0, 0.15); 
+            color: #524a00; 
+            border-left-color: var(--warning);
+        }
+        body.light-theme .spinner-border {
+            color: var(--primary) !important;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <!-- Animated background elements -->
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <!-- Music notes animation -->
+    <div class="music-notes" id="musicNotes"></div>
+
+    <!-- Confetti container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <div class="app-container">
+        <div class="glass-card">
+            <div class="app-header">
+                <h1 class="app-title">Music Genre Wizard</h1>
+                <p class="app-subtitle">Upload your music and discover its genre instantly</p>
+            </div>
+            
+            <div class="app-body">
+                <div id="errorMessage"></div>
+
+                <div class="upload-box" id="uploadContainer">
+                    <input type="file" id="audioInput" accept=".mp3,.wav" hidden>
+                    <div class="upload-content" onclick="document.getElementById('audioInput').click()">
+                        <div class="upload-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <h4 class="upload-text">Drop your audio file here</h4>
+                        <p class="upload-subtext">or click to browse your files</p>
+                        <div class="mt-3">
+                            <span class="file-badge me-1">.MP3</span>
+                            <span class="file-badge">.WAV</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="loading" class="text-center d-none">
+                    <div class="equalizer">
+                        <div class="equalizer-bar" style="animation-delay: 0s; height: 100%;"></div>
+                        <div class="equalizer-bar" style="animation-delay: 0.1s; height: 100%;"></div>
+                        <div class="equalizer-bar" style="animation-delay: 0.2s; height: 100%;"></div>
+                        <div class="equalizer-bar" style="animation-delay: 0.3s; height: 100%;"></div>
+                        <div class="equalizer-bar" style="animation-delay: 0.4s; height: 100%;"></div>
+                        <div class="equalizer-bar" style="animation-delay: 0.5s; height: 100%;"></div>
+                        <div class="equalizer-bar" style="animation-delay: 0.6s; height: 100%;"></div>
+                    </div>
+                    <p class="loading-text">
+                        <i class="fas fa-magic me-2"></i>Analyzing audio patterns...
+                    </p>
+                </div>
+
+                <div id="result" class="result-card neon-glow">
+                    <div class="genre-icon-container">
+                        <div class="genre-icon">🎵</div>
+                    </div>
+                    <div class="text-center">
+                        <p class="result-label">Predicted Genre</p>
+                        <h2 class="genre-result" id="genreResult">Pop</h2>
+                        
+                        <div class="audio-player-container">
+                            <audio id="audioPlayer" class="audio-player" controls>
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Section -->
+                    <div id="recommendationsContainer" class="mt-4 pt-3 border-top border-secondary border-opacity-25" style="display: none;">
+                        <h4 class="recommendations-title text-center mb-3">
+                            <i class="fas fa-headphones-alt me-2"></i>Recommended Songs in <span id="recommendedGenreName" class="fw-bold"></span>
+                        </h4>
+                        <div id="recommendationsLoading" class="text-center my-3" style="display: none;">
+                            <div class="spinner-border" role="status" style="width: 2.5rem; height: 2.5rem;">
+                                <span class="visually-hidden">Loading recommendations...</span>
+                            </div>
+                            <p class="mt-2 loading-text">Fetching recommendations...</p>
+                        </div>
+                        <div id="recommendationsError" class="alert alert-warning" style="display: none; background-color: rgba(255, 165, 0, 0.1); border-left: 4px solid var(--warning); color: white; border-radius: 8px;">
+                            Could not fetch recommendations.
+                        </div>
+                        <div id="recommendationsList" class="row gx-3 gy-3">
+                            <!-- Song cards will be injected here -->
+                        </div>
+                    </div>
+                    <!-- END: Recommendations Section -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Button -->
+    <button type="button" id="historyBtn" class="history-btn">
+        <i class="fas fa-history"></i>
+    </button>
+
+    <!-- History Panel -->
+    <div id="historyPanel" class="history-panel">
+        <div class="history-panel-header">
+            <h3 class="history-panel-title">
+                <i class="fas fa-history me-2"></i>Prediction History
+            </h3>
+            <button type="button" id="historyCloseBtn" class="history-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    
+        <!-- Search Box -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchHistory" class="search-input" placeholder="Search history...">
+        </div>
+    
+        <!-- Filters -->
+        <div class="history-filters">
+            <button type="button" class="filter-btn active" data-filter="all">All</button>
+            <button type="button" class="filter-btn" data-filter="favorites">Favorites</button>
+        </div>
+    
+        <!-- Stats Summary -->
+        <div class="stats-container mx-3 mb-3">
+            <h4 class="stats-title">Your Music Stats</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="statTotalValue">0</div>
+                    <div class="stat-label">Total Tracks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statGenresValue">0</div>
+                    <div class="stat-label">Unique Genres</div>
+                </div>
+            </div>
+        </div>
+    
+        <div id="historyList" class="history-list">
+            <!-- History items will be added here -->
+        </div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button type="button" id="themeToggleBtn" class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // const API_HOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        //     ? window.location.hostname : '127.0.0.1';
+        // const API_PORT = 5000;
+        // const API_URL = `http://${API_HOST}:${API_PORT}/predict`;
+
+        const MAX_HISTORY = 20; 
+
+        function createMusicNotes() {
+            const musicNotes = document.getElementById('musicNotes');
+            const notes = ['♪', '♫', '♩', '♬', '♭', '♮', '♯'];
+            if (musicNotes.children.length > 0) return; // Avoid creating multiple times
+            for (let i = 0; i < 20; i++) {
+                const note = document.createElement('div');
+                note.classList.add('music-note');
+                note.textContent = notes[Math.floor(Math.random() * notes.length)];
+                note.style.left = `${Math.random() * 100}%`;
+                note.style.animationDuration = `${10 + Math.random() * 15}s`;
+                note.style.animationDelay = `${Math.random() * 10}s`;
+                musicNotes.appendChild(note);
+            }
+        }
+
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confettiContainer');
+            confettiContainer.style.display = 'block';
+            confettiContainer.innerHTML = '';
+            
+            const colors = ['#ff1493', '#8a2be2', '#00c9a7', '#ffd166', '#ff8c00'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * -20}%`; // Start above screen
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = `${5 + Math.random() * 10}px`;
+                confetti.style.height = `${5 + Math.random() * 10}px`;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                const fallDuration = 3 + Math.random() * 5;
+                const fallDelay = Math.random() * 2;
+                
+                confetti.animate([
+                    { transform: `translateY(0) rotate(${Math.random() * 360}deg)`, opacity: 0 },
+                    { opacity: 1, offset: 0.1 },
+                    { transform: `translateY(${window.innerHeight * 1.2}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: fallDuration * 1000,
+                    delay: fallDelay * 1000,
+                    easing: 'ease-out',
+                    fill: 'forwards'
+                });
+                confettiContainer.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                confettiContainer.style.display = 'none';
+            }, 8000);
+        }
+
+        const uploadContainer = document.getElementById('uploadContainer');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, () => uploadContainer.classList.add('border-primary', 'bg-opacity-10'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, () => uploadContainer.classList.remove('border-primary', 'bg-opacity-10'), false);
+        });
+
+        uploadContainer.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length) {
+                const audioInput = document.getElementById('audioInput');
+                audioInput.files = files;
+                const event = new Event('change');
+                audioInput.dispatchEvent(event);
+            }
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>${message}`;
+            errorElement.style.display = 'block';
+            document.getElementById('loading').classList.add('d-none');
+            showToast(message, 'error');
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function updateHistory(filename, genre) {
+            const entry = {
+                filename,
+                genre,
+                time: new Date().toLocaleString(),
+                favorite: false,
+                id: Date.now() 
+            };
+
+            let history = JSON.parse(localStorage.getItem('genreHistory')) || [];
+            history.unshift(entry);
+            history = history.slice(0, MAX_HISTORY); 
+            localStorage.setItem('genreHistory', JSON.stringify(history));
+            renderHistory();
+            updateStats();
+            showToast(`Added "${filename}" to history`, 'success');
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            const searchTerm = document.getElementById('searchHistory').value.toLowerCase();
+            
+            let history = JSON.parse(localStorage.getItem('genreHistory')) || [];
+            
+            if (activeFilter === 'favorites') {
+                history = history.filter(entry => entry.favorite);
+            }
+            
+            if (searchTerm) {
+                history = history.filter(entry => 
+                    entry.filename.toLowerCase().includes(searchTerm) || 
+                    entry.genre.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if (history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="history-empty">
+                        <i class="fas fa-compact-disc fa-spin" style="--fa-animation-duration: 5s;"></i>
+                        <p>No prediction history yet</p>
+                        <p class="small">Upload a music file to get started</p>
+                    </div>
+                `;
+                renderHistoryFooter();
+                return;
+            }
+
+            history.forEach(entry => {
+                const item = document.createElement('div');
+                item.classList.add('history-item');
+                item.dataset.id = entry.id; 
+                
+                item.innerHTML = `
+                    <span class="history-filename">${entry.filename}</span>
+                    <div class="d-flex align-items-center justify-content-between mt-2">
+                        <div>
+                            <i class="fas fa-record-vinyl me-2 text-white-50"></i>
+                            <span class="history-genre">${entry.genre}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <button class="favorite-btn ${entry.favorite ? 'active' : ''}" data-id="${entry.id}" title="Toggle Favorite">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="delete-history-btn" data-id="${entry.id}" title="Delete Item">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <span class="history-time">
+                        <i class="far fa-clock me-1"></i>${entry.time}
+                    </span>
+                `;
+                historyList.appendChild(item);
+            });
+            
+            renderHistoryFooter();
+        }
+
+        function deleteHistoryItem(id) {
+            let history = JSON.parse(localStorage.getItem('genreHistory')) || [];
+            const entryToDelete = history.find(entry => entry.id.toString() === id.toString());
+            
+            if (entryToDelete) {
+                history = history.filter(entry => entry.id.toString() !== id.toString());
+                localStorage.setItem('genreHistory', JSON.stringify(history));
+                renderHistory();
+                updateStats();
+                showToast(`Deleted "${entryToDelete.filename}"`, 'info');
+            }
+        }
+
+        function toggleFavorite(id) {
+            let history = JSON.parse(localStorage.getItem('genreHistory')) || [];
+            const entryIndex = history.findIndex(entry => entry.id.toString() === id.toString());
+            
+            if (entryIndex !== -1) {
+                history[entryIndex].favorite = !history[entryIndex].favorite;
+                localStorage.setItem('genreHistory', JSON.stringify(history));
+                renderHistory(); // Re-render to update star icon
+                
+                const action = history[entryIndex].favorite ? 'Added' : 'Removed';
+                showToast(`${action} "${history[entryIndex].filename}" ${history[entryIndex].favorite ? 'to' : 'from'} favorites`, 'success');
+            }
+        }
+
+        function clearAllHistory() {
+            if (confirm('Are you sure you want to clear all history? This cannot be undone.')) {
+                localStorage.removeItem('genreHistory');
+                renderHistory();
+                updateStats();
+                showToast('All history cleared', 'info');
+            }
+        }
+
+        document.getElementById('historyList').addEventListener('click', (e) => {
+            const deleteBtn = e.target.closest('.delete-history-btn');
+            const favoriteBtn = e.target.closest('.favorite-btn');
+
+            if (deleteBtn) {
+                deleteHistoryItem(deleteBtn.dataset.id);
+            } else if (favoriteBtn) {
+                toggleFavorite(favoriteBtn.dataset.id);
+            }
+        });
+
+        function renderHistoryFooter() {
+            const history = JSON.parse(localStorage.getItem('genreHistory')) || [];
+            const historyPanel = document.getElementById('historyPanel'); // Get parent of historyList
+            let footer = historyPanel.querySelector('#historyFooter'); // Try to find existing footer
+            
+            if (history.length > 0) {
+                if (!footer) {
+                    footer = document.createElement('div');
+                    footer.id = 'historyFooter';
+                    footer.className = 'p-3 border-top border-secondary border-opacity-10 flex-shrink-0';
+                    footer.innerHTML = `
+                        <button class="clear-history-btn" id="clearHistoryBtn">
+                            <i class="fas fa-trash-alt me-2"></i> Clear All History
+                        </button>
+                    `;
+                    // Insert footer after historyList but before any other fixed elements if necessary
+                    // For now, appending to historyPanel might be fine if historyList is the last main child.
+                    // Or, more precisely:
+                    document.getElementById('historyList').after(footer); 
+                }
+                // Ensure event listener is attached (or re-attached if footer is recreated)
+                const clearBtn = footer.querySelector('#clearHistoryBtn');
+                if (clearBtn) { // Defensive check
+                     clearBtn.removeEventListener('click', clearAllHistory); // Remove old listener
+                     clearBtn.addEventListener('click', clearAllHistory);   // Add new listener
+                }
+            } else if (footer) {
+                footer.remove(); // Remove footer if history is empty
+            }
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderHistory();
+            });
+        });
+
+        document.getElementById('searchHistory').addEventListener('input', () => {
+            renderHistory();
+        });
+
+        const historyBtn = document.getElementById('historyBtn');
+        const historyPanel = document.getElementById('historyPanel');
+        const historyCloseBtn = document.getElementById('historyCloseBtn');
+
+        historyBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            historyPanel.classList.toggle('show');
+            historyBtn.classList.toggle('active');
+            if (historyPanel.classList.contains('show')) {
+                renderHistory();
+                updateStats();
+            }
+        };
+
+        historyCloseBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            historyPanel.classList.remove('show');
+            historyBtn.classList.remove('active');
+        };
+
+        document.addEventListener('click', (e) => {
+            if (historyPanel.classList.contains('show') && 
+                !historyPanel.contains(e.target) && 
+                e.target !== historyBtn && 
+                !historyBtn.contains(e.target)) {
+                historyPanel.classList.remove('show');
+                historyBtn.classList.remove('active');
+            }
+        });
+
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            themeToggleBtn.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            showToast(isLight ? 'Light theme activated' : 'Dark theme activated', 'info');
+        });
+
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>'; // Default to dark if no theme or dark
+            }
+        }
+
+        function updateStats() {
+            const history = JSON.parse(localStorage.getItem('genreHistory')) || [];
+            document.getElementById('statTotalValue').textContent = history.length;
+            const uniqueGenres = [...new Set(history.map(entry => entry.genre))];
+            document.getElementById('statGenresValue').textContent = uniqueGenres.length;
+        }
+
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.classList.add('toast', `toast-${type}`);
+            
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            toast.innerHTML = `
+                <i class="fas fa-${icon} me-2"></i>
+                <span>${message}</span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        document.getElementById('audioInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Hide recommendations from previous run
+            const recommendationsContainer = document.getElementById('recommendationsContainer');
+            if (recommendationsContainer) {
+                recommendationsContainer.style.display = 'none';
+            }
+            const resultCard = document.getElementById('result');
+            resultCard.classList.remove('show-result'); // Hide previous result card fully
+
+
+            hideError();
+            document.getElementById('loading').classList.remove('d-none');
+            
+            const audioURL = URL.createObjectURL(file);
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = audioURL;
+            audioPlayer.load();
+
+            const formData = new FormData();
+            formData.append('audio', file);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'cors',
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({error: `Server error: ${response.status}`}));
+                    throw new Error(errorData.error || `Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                if (data.genre) {
+                    showResult(data.genre); // This will also trigger fetchRecommendations
+                    updateHistory(file.name, data.genre);
+                    createConfetti(); 
+                } else {
+                    throw new Error('No genre in response');
+                }
+            } catch (error) {
+                showError(`Prediction failed: ${error.message}`);
+            } finally {
+                document.getElementById('loading').classList.add('d-none');
+            }
+        });
+
+        function showResult(genre) {
+            document.getElementById('loading').classList.add('d-none');
+            document.getElementById('genreResult').textContent = genre;
+            
+            const emojiMap = {
+                rock: '🎸', pop: '🎤', jazz: '🎷', classical: '🎻', hiphop: '🎧', 
+                country: '🤠', disco: '🪩', metal: '🤘', reggae: '🌴', blues: '🎹',
+                electronic: '🎛️', folk: '🪕', indie: '🎙️', rnb: '🎵', soul: '💫'
+            };
+            const emoji = emojiMap[genre.toLowerCase()] || '🎵';
+            document.querySelector('.genre-icon').textContent = emoji;
+
+            const resultCard = document.getElementById('result');
+            resultCard.style.display = 'block'; // Make it visible first
+            setTimeout(() => { // Then animate
+                resultCard.classList.add('show-result');
+            }, 10);
+            
+            const audioPlayer = document.getElementById('audioPlayer');
+            if(audioPlayer.src) audioPlayer.play().catch(e => console.warn("Audio play prevented:", e));
+
+            fetchRecommendations(genre);
+        }
+
+        async function fetchRecommendations(genre) {
+            const recommendationsContainer = document.getElementById('recommendationsContainer');
+            const recommendationsList = document.getElementById('recommendationsList');
+            const recommendationsLoading = document.getElementById('recommendationsLoading');
+            const recommendationsError = document.getElementById('recommendationsError');
+            const recommendedGenreName = document.getElementById('recommendedGenreName');
+
+            recommendationsContainer.style.display = 'block'; 
+            recommendationsList.innerHTML = '';
+            recommendationsList.style.display = 'none';
+            recommendationsError.style.display = 'none';
+            recommendationsLoading.style.display = 'block';
+            recommendedGenreName.textContent = genre.charAt(0).toUpperCase() + genre.slice(1);
+
+            try {
+                // const response = await fetch(`http://${API_HOST}:${API_PORT}/genre_songs/${genre}`);
+                const response = await fetch(`/genre_songs/${genre}`);
+                const data = await response.json();
+
+                recommendationsLoading.style.display = 'none';
+
+                if (!response.ok || data.error) {
+                    const errorMsg = data.error || `Failed to fetch recommendations (HTTP ${response.status}).`;
+                    recommendationsError.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${errorMsg}`;
+                    recommendationsError.style.display = 'block';
+                    if (data.error && data.error.includes("API key not configured")) {
+                         showToast("Recommendation feature is currently unavailable.", "warning");
+                    } else {
+                        showToast(errorMsg, 'error');
+                    }
+                    return;
+                }
+
+                if (data.tracks && data.tracks.length > 0) {
+                    data.tracks.forEach(track => {
+                        recommendationsList.appendChild(createSongCardElement(track));
+                    });
+                    recommendationsList.style.display = 'flex'; // Bootstrap .row needs display:flex or children won't align as columns
+                } else {
+                    recommendationsError.innerHTML = `<i class="fas fa-info-circle me-2"></i>No song recommendations found for ${genre}.`;
+                    recommendationsError.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                recommendationsLoading.style.display = 'none';
+                recommendationsError.innerHTML = `<i class="fas fa-network-wired me-2"></i>An error occurred while fetching recommendations. Please check your connection or try again later.`;
+                recommendationsError.style.display = 'block';
+                showToast('Could not connect to recommendations service.', 'error');
+            }
+        }
+
+        function createSongCardElement(track) {
+            const colDiv = document.createElement('div');
+            colDiv.className = 'col-lg-6 col-md-12 mb-3'; // 2 per row on large, 1 on medium/small
+
+            const link = document.createElement('a');
+            link.href = track.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.className = 'song-card-link';
+
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'song-card';
+
+            const imgDiv = document.createElement('div'); 
+            imgDiv.className = 'song-image';
+            if (track.image_url) {
+                const img = document.createElement('img');
+                img.src = track.image_url;
+                img.alt = track.name;
+                img.loading = 'lazy';
+                imgDiv.appendChild(img);
+            } else {
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-compact-disc song-image-placeholder'; 
+                imgDiv.appendChild(icon);
+            }
+            
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'song-details';
+
+            const titleH5 = document.createElement('h5');
+            titleH5.className = 'song-title';
+            titleH5.textContent = track.name;
+            titleH5.title = track.name; 
+
+            const artistP = document.createElement('p');
+            artistP.className = 'song-artist';
+            artistP.textContent = track.artist;
+            artistP.title = track.artist; 
+
+            detailsDiv.appendChild(titleH5);
+            detailsDiv.appendChild(artistP);
+
+            cardDiv.appendChild(imgDiv);
+            cardDiv.appendChild(detailsDiv);
+            link.appendChild(cardDiv);
+            colDiv.appendChild(link);
+
+            return colDiv;
+        }
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+            createMusicNotes();
+            applyTheme(); // Apply theme first
+            renderHistory(); // Then render history which might depend on theme for styling
+            updateStats();
+            
+            if (typeof bootstrap === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js';
+                document.head.appendChild(script);
+            }
+        });
+    </script>
+</body>
+</html>
