@@ -19,7 +19,7 @@ A full-stack AI-powered web app that classifies the genre of any uploaded music 
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/keshav6740/smart-music-genre-classification.git
+git clone https://github.com/rishit2904/smart-music-genre-classification.git
 cd smart-music-genre-classification
 ```
 
